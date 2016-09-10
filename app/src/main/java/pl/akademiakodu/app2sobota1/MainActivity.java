@@ -44,24 +44,7 @@ public class MainActivity extends AppCompatActivity {
     String correctPass = "password12";
     public Integer ileHappy;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        //   Toast.makeText(this, login.toString(), Toast.LENGTH_LONG).show();
-
-
-        //Picasso.with(this).load("http://images.clipartpanda.com/smile-clipart-smile-clip-art-66-350x350.jpg").into(imageView);
-    }
-    /*@OnTextChanged(R.id.editTextLogin)
-    public void changeText (CharSequence text){
-
-    }*/
-
-    @OnClick(R.id.buttonLog)
-    public void log() {
+    public void alertDialog(String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
         alertDialog.setTitle("ERROR");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -70,7 +53,19 @@ public class MainActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
+        alertDialog.setMessage(message);
+        alertDialog.show();
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+    }
+
+    @OnClick(R.id.buttonLog)
+    public void log() {
 
         login.delete(0, login.length());
         pass.delete(0, pass.length());
@@ -88,46 +83,38 @@ public class MainActivity extends AppCompatActivity {
                 keyboard.showSoftInput(EditIle, InputMethodManager.SHOW_IMPLICIT);
                 happyOrNotButton.setVisibility(View.VISIBLE);
             } else {
-
-                alertDialog.setMessage("Wrong password");
-
-                alertDialog.show();
+                alertDialog("Wrong password");
                 Toast.makeText(this, "Access denied", Toast.LENGTH_LONG).show();
 
             }
 
             Toast.makeText(this, "Access granded", Toast.LENGTH_LONG).show();
-            InputMethodManager keyboard = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             keyboard.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
         } else {
-            alertDialog.setMessage("Wrong login");
-
-            alertDialog.show();
+            alertDialog("Wrong login");
             Toast.makeText(this, "Access denied", Toast.LENGTH_LONG).show();
         }
     }
 
     @OnClick(R.id.happyOrNotButton)
-    public void happiness() {
-        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        alertDialog.setTitle("ERROR");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+    public void happiness() throws IllegalStateException {
+        ileHappy = Integer.parseInt(EditIle.getText().toString());
         try {
-            ileHappy = Integer.parseInt(EditIle.getText().toString());
-            Intent intent = new Intent(this, ImageActivity.class);
-            intent.putExtra("howMuch", ileHappy);
-            startActivity(intent);
-        } catch (NumberFormatException e) {
-            alertDialog.setMessage("incorrect data");
-            alertDialog.show();
+
+            if (ileHappy > 100) {
+                throw new IllegalStateException();
+
+            } else {
+                Intent intent = new Intent(this, ImageActivity.class);
+                intent.putExtra("howMuch", ileHappy);
+                startActivity(intent);
+            }
+        } catch (IllegalStateException e) {
+            alertDialog("Number range is 0-100");
+
         }
-
-
-
     }
+
+
 }
